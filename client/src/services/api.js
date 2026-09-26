@@ -24,9 +24,14 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Interceptor to handle unauthenticated 401 response
+// Interceptor to handle responses and unauthenticated 401 response
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (typeof response.data === 'string' && response.data.trim().startsWith('<')) {
+      return { ...response, data: {} };
+    }
+    return response;
+  },
   (error) => {
     if (error.response && error.response.status === 401) {
       // If token expired or invalid, clear stale token

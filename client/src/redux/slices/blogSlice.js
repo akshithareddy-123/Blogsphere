@@ -80,7 +80,11 @@ const blogSlice = createSlice({
       })
       .addCase(fetchTrendingBlogs.fulfilled, (state, action) => {
         state.trendingLoading = false;
-        state.trending = action.payload;
+        state.trending = Array.isArray(action.payload) ? action.payload : [];
+      })
+      .addCase(fetchTrendingBlogs.rejected, (state) => {
+        state.trendingLoading = false;
+        state.trending = [];
       })
       // Feed
       .addCase(fetchBlogs.pending, (state) => {
@@ -88,22 +92,22 @@ const blogSlice = createSlice({
       })
       .addCase(fetchBlogs.fulfilled, (state, action) => {
         state.feedLoading = false;
-        const { blogs, total, totalPages, currentPage, append } = action.payload;
-        state.totalBlogs = total;
-        state.totalPages = totalPages;
-        state.currentPage = currentPage;
-        if (append) {
-          // deduplicate
-          const existingIds = new Set(state.feed.map((b) => b._id));
+        const blogs = Array.isArray(action.payload?.blogs) ? action.payload.blogs : [];
+        state.totalBlogs = action.payload?.total || 0;
+        state.totalPages = action.payload?.totalPages || 1;
+        state.currentPage = action.payload?.currentPage || 1;
+        if (action.payload?.append) {
+          const existingIds = new Set((state.feed || []).map((b) => b._id));
           const newBlogs = blogs.filter((b) => !existingIds.has(b._id));
-          state.feed = [...state.feed, ...newBlogs];
+          state.feed = [...(state.feed || []), ...newBlogs];
         } else {
           state.feed = blogs;
         }
       })
       .addCase(fetchBlogs.rejected, (state, action) => {
         state.feedLoading = false;
-        state.error = action.error.message;
+        state.feed = state.feed || [];
+        state.error = action.error?.message;
       })
       // Details
       .addCase(fetchBlogDetails.pending, (state) => {

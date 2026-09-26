@@ -2,11 +2,17 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
 import { getSocket } from '../../services/socket';
 
-// Load stored auth
-const storedToken = localStorage.getItem('blogsphere_token');
-const storedUser = localStorage.getItem('blogsphere_user')
-  ? JSON.parse(localStorage.getItem('blogsphere_user'))
-  : null;
+// Load stored auth safely
+const storedToken = typeof window !== 'undefined' ? localStorage.getItem('blogsphere_token') : null;
+let storedUser = null;
+try {
+  const raw = typeof window !== 'undefined' ? localStorage.getItem('blogsphere_user') : null;
+  if (raw && raw !== 'undefined' && raw !== 'null') {
+    storedUser = JSON.parse(raw);
+  }
+} catch (e) {
+  storedUser = null;
+}
 
 export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   try {

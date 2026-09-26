@@ -189,10 +189,10 @@ export default function LandingPage() {
             </div>
 
             <div className="space-y-4">
-              {feedLoading && feed.length === 0 ? (
+              {feedLoading && (!feed || feed.length === 0) ? (
                 <div className="py-12 text-center text-slate-400">Loading stories...</div>
               ) : (
-                feed.slice(0, 5).map((blog) => (
+                (feed || []).slice(0, 5).map((blog) => (
                   <BlogCard key={blog._id} blog={blog} onShare={(b) => setSelectedShareBlog(b)} />
                 ))
               )}
