@@ -37,6 +37,23 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Root Welcome endpoint
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    service: 'BlogSphere Backend REST Engine 🚀',
+    message: 'Backend API is running smoothly!',
+    frontendApp: process.env.CLIENT_URL || 'http://localhost:5173',
+    endpoints: {
+      health: '/api/health',
+      blogs: '/api/blogs',
+      trending: '/api/blogs/trending',
+      auth: '/api/auth/login',
+      categories: '/api/admin/categories',
+    },
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
