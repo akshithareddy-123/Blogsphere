@@ -30,7 +30,7 @@ initSocket(server);
 // Middleware
 app.use(
   cors({
-    origin: '*',
+    origin: (origin, callback) => callback(null, true),
     credentials: true,
   })
 );

@@ -1,7 +1,6 @@
 import { io } from 'socket.io-client';
 
-// Use same host or fallback
-const SOCKET_URL = window.location.origin;
+const SOCKET_URL = import.meta.env.VITE_API_URL || window.location.origin;
 
 let socket = null;
 
